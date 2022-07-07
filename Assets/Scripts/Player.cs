@@ -2,25 +2,36 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent (typeof(BoxCollider2D))]
+[RequireComponent(typeof(BoxCollider2D))]
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(SpriteRenderer))]
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private float _speedXMultiplier = 5f;
     [SerializeField] private float _speedYForce = 5f;
-    [SerializeField] private Vector2 _velocity;
 
+    private HealthController _health;
+    private SpriteRenderer _spriteRenderer;
+    private Animator _animator;
     private BoxCollider2D _boxCollider;
     private Rigidbody2D _rigidbody;
-    private bool _isGrounded;
+    private int _jumpHash;
+    private int _speedHash;
+    private bool _isDamaged;
 
     private void Start()
     {
+        _isDamaged = false;
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
         _boxCollider = GetComponent<BoxCollider2D>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _rigidbody.velocity = Vector2.zero;
-        _isGrounded = false;
+        _jumpHash = Animator.StringToHash("isFlying");
+        _speedHash = Animator.StringToHash("Speed");
+        _health = FindObjectOfType<HealthController>();
     }
 
     private void Update()
@@ -29,13 +40,40 @@ public class Player : MonoBehaviour
 
         _rigidbody.velocity = new Vector2(directionX * _speedXMultiplier, _rigidbody.velocity.y);
 
-        if (Input.GetButtonDown("Jump") && CheckIfGrounded())
+        if (Input.GetButton("Jump") && CheckIfGrounded())
         {
-            _isGrounded = false;
             _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _speedYForce);
+            _animator.SetTrigger(_jumpHash);
         }
+        else
+        {
+            if (directionX < 0)
+            {
+                directionX = -directionX;
+                _spriteRenderer.flipX = true;
+            }
+            else
+            {
+                _spriteRenderer.flipX = false;
+            }
 
-        _velocity = _rigidbody.velocity;
+            _animator.SetFloat(_speedHash, directionX);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("collision");
+    }
+
+    public void GetDamaged()
+    {
+        if (_isDamaged == false)
+        {
+            _health.RemoveLife();
+            _isDamaged = true;
+            StartCoroutine(ResistInstantDamage());
+        }
     }
 
     private bool CheckIfGrounded()
@@ -44,5 +82,14 @@ public class Player : MonoBehaviour
 
         RaycastHit2D raycastHit = Physics2D.BoxCast(_boxCollider.bounds.center, _boxCollider.bounds.size, 0, Vector2.down, CheckLength, _layerMask);
         return raycastHit.collider != null;
+    }
+
+    private IEnumerator ResistInstantDamage()
+    {
+        const float DamageDelay = 1f;
+
+        yield return new WaitForSeconds(DamageDelay);
+
+        _isDamaged = false;
     }
 }
