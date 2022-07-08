@@ -38,7 +38,6 @@ public class HealthController : MonoBehaviour
 
     private void UpdateRender()
     {
-        Debug.Log("rend");
         for (int i = 0; i < _health; i++)
         {
             _hearts[i].color = Color.white;

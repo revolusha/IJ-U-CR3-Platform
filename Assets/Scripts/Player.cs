@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -8,21 +9,27 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    const int MaxHealth = 3;
+
+    [SerializeField] private UnityEvent _getDamaged = new UnityEvent();
+    [SerializeField] private UnityEvent _getKilled = new UnityEvent();
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private float _speedXMultiplier = 5f;
     [SerializeField] private float _speedYForce = 5f;
 
-    private HealthController _health;
+    private HealthController _healthUI;
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
     private BoxCollider2D _boxCollider;
     private Rigidbody2D _rigidbody;
     private int _jumpHash;
     private int _speedHash;
+    private int _health;
     private bool _isDamaged;
 
     private void Start()
     {
+        _health = MaxHealth;
         _isDamaged = false;
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
@@ -31,14 +38,13 @@ public class Player : MonoBehaviour
         _rigidbody.velocity = Vector2.zero;
         _jumpHash = Animator.StringToHash("isFlying");
         _speedHash = Animator.StringToHash("Speed");
-        _health = FindObjectOfType<HealthController>();
+        _healthUI = FindObjectOfType<HealthController>();
+        Debug.Log(_health);
     }
 
     private void Update()
     {
         float directionX = Input.GetAxis("Horizontal");
-
-        _rigidbody.velocity = new Vector2(directionX * _speedXMultiplier, _rigidbody.velocity.y);
 
         if (Input.GetButton("Jump") && CheckIfGrounded())
         {
@@ -47,6 +53,8 @@ public class Player : MonoBehaviour
         }
         else
         {
+            _rigidbody.velocity = new Vector2(directionX * _speedXMultiplier, _rigidbody.velocity.y);
+
             if (directionX < 0)
             {
                 directionX = -directionX;
@@ -61,16 +69,24 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        Debug.Log("collision");
-    }
-
     public void GetDamaged()
     {
+        const float TimeBeforeDestroy = 2f;
+
         if (_isDamaged == false)
         {
-            _health.RemoveLife();
+            _healthUI.RemoveLife();
+            _health--;
+            Debug.Log(_health);
+
+            if (_health < 1)
+            {
+                PlayDead();
+                Destroy(gameObject, TimeBeforeDestroy);
+                return;
+            }
+
+            _getDamaged.Invoke();
             _isDamaged = true;
             StartCoroutine(ResistInstantDamage());
         }
@@ -84,11 +100,26 @@ public class Player : MonoBehaviour
         return raycastHit.collider != null;
     }
 
+    private void PlayDead()
+    {
+        _spriteRenderer.color = new Color(1f, .5f, .5f);
+        _boxCollider.enabled = false;
+        _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, _speedYForce);
+        _getKilled.Invoke();
+    }
+
     private IEnumerator ResistInstantDamage()
     {
-        const float DamageDelay = 1f;
+        const float Delay = 0.10f;
+        const int BlinkSteps = 5;
 
-        yield return new WaitForSeconds(DamageDelay);
+        for (int i = 0; i < BlinkSteps; i++)
+        {
+            yield return new WaitForSeconds(Delay);
+            _spriteRenderer.color = new Color(1f, .5f, .5f);
+            yield return new WaitForSeconds(Delay);
+            _spriteRenderer.color = Color.white;
+        }
 
         _isDamaged = false;
     }
