@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     [SerializeField] private float _speedXMultiplier = 5f;
     [SerializeField] private float _speedYForce = 5f;
 
+    private GoldLabel _label;
     private HealthController _healthUI;
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
@@ -25,21 +26,24 @@ public class Player : MonoBehaviour
     private int _jumpHash;
     private int _speedHash;
     private int _health;
+    private int _gold;
     private bool _isDamaged;
 
     private void Start()
     {
+        _gold = 0;
         _health = MaxHealth;
         _isDamaged = false;
         _spriteRenderer = GetComponent<SpriteRenderer>();
         _animator = GetComponent<Animator>();
         _boxCollider = GetComponent<BoxCollider2D>();
         _rigidbody = GetComponent<Rigidbody2D>();
+        _label = FindObjectOfType<GoldLabel>();
         _rigidbody.velocity = Vector2.zero;
         _jumpHash = Animator.StringToHash("isFlying");
         _speedHash = Animator.StringToHash("Speed");
         _healthUI = FindObjectOfType<HealthController>();
-        Debug.Log(_health);
+        _label.UpdateGold(_gold);
     }
 
     private void Update()
@@ -75,9 +79,8 @@ public class Player : MonoBehaviour
 
         if (_isDamaged == false)
         {
-            _healthUI.RemoveLife();
             _health--;
-            Debug.Log(_health);
+            _healthUI.UpdateRender(_health);
 
             if (_health < 1)
             {
@@ -89,6 +92,24 @@ public class Player : MonoBehaviour
             _getDamaged.Invoke();
             _isDamaged = true;
             StartCoroutine(ResistInstantDamage());
+        }
+    }
+
+    public void TakeCoin()
+    {
+        _gold++;
+        _label.UpdateGold(_gold);
+    }
+
+    private void TryConvertGoldToHeart()
+    {
+        const int HeartCost = 5;
+
+        if (_gold >= HeartCost && _health < 3)
+        {
+            _gold -= HeartCost;
+            _health++;
+            _healthUI.UpdateRender(_health);
         }
     }
 

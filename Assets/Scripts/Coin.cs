@@ -1,18 +1,32 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
+
+[RequireComponent(typeof(SpriteRenderer))]
 
 public class Coin : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private UnityEvent _reached;
+
+    private SpriteRenderer _sprite;
+    private CircleCollider2D _circleCollider;
+
+    private void Start()
     {
-        
+        _sprite = GetComponent<SpriteRenderer>();
+        _circleCollider = GetComponent<CircleCollider2D>();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnTriggerEnter2D(Collider2D collider)
     {
-        
+        if (collider.TryGetComponent<Player>(out Player player))
+        {
+            const float TimeToPlaySound = 3f;
+
+            player.TakeCoin();
+            _reached.Invoke();
+            _sprite.color = new Color(0, 0, 0, 0);
+            _circleCollider.enabled = false;
+            Destroy(gameObject, TimeToPlaySound);
+        }
     }
 }

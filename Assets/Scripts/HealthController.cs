@@ -7,43 +7,33 @@ public class HealthController : MonoBehaviour
     [SerializeField] Color _removedHeartColor;
 
     private SpriteRenderer[] _hearts;
-    private int _maxHealth;
-    private int _health;
+    private int _maxHealth = 3;
 
     private void Start()
     {
         _hearts = GetComponentsInChildren<SpriteRenderer>();
-        _maxHealth = _hearts.Length;
-        _health = _maxHealth;
-        UpdateRender(); 
+        UpdateRender(_maxHealth); 
     }
 
-    public void AddLife()
+    public void UpdateRender(int count)
     {
-        if (_health < _maxHealth)
+        Debug.Log(count);
+
+        if (count > _maxHealth)
         {
-            _health++;
-            UpdateRender();
+            count = _maxHealth;
         }
-    }
-
-    public void RemoveLife()
-    {
-        if (_health > 0)
+        else if (count < 0)
         {
-            _health--;
-            UpdateRender();
+            count = 0;
         }
-    }
 
-    private void UpdateRender()
-    {
-        for (int i = 0; i < _health; i++)
+        for (int i = 0; i < count; i++)
         {
             _hearts[i].color = Color.white;
         }
 
-        for (int i = _health; i < _maxHealth; i++)
+        for (int i = count; i < _maxHealth; i++)
         {
             _hearts[i].color = _removedHeartColor;
         }
