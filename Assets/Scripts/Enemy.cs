@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Player _player;
     [SerializeField] private UnityEvent _getKilled = new UnityEvent();
 
+    private CoinSpawner _spawner;
     private SpriteRenderer _sprite;
     private Rigidbody2D _rb2d;
     private CapsuleCollider2D _capsuleCollider;
@@ -25,6 +26,11 @@ public class Enemy : MonoBehaviour
     public Vector3 _targetPoint;
     public bool _isMovingToStart;
     public bool _isDead;
+
+    private void Awake()
+    {
+        _spawner = FindObjectOfType<CoinSpawner>();
+    }
 
     private void Start()
     {
@@ -43,6 +49,9 @@ public class Enemy : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collider)
     {
+        if (_isDead)
+            return;
+
         if (collider.TryGetComponent<Player>(out _))
         {
             if (_boxCollider.IsTouching(_player.GetComponent<Collider2D>()))
@@ -52,6 +61,20 @@ public class Enemy : MonoBehaviour
             else if (_capsuleCollider.IsTouching(_player.GetComponent<Collider2D>()))
             {
                 PlayDead();
+            }
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collider)
+    {
+        if (_isDead)
+            return;
+
+        if (collider.TryGetComponent<Player>(out _))
+        {
+            if (_boxCollider.IsTouching(_player.GetComponent<Collider2D>()))
+            {
+                _player.GetDamaged();
             }
         }
     }
@@ -66,7 +89,6 @@ public class Enemy : MonoBehaviour
         const float TimeBeforeDestroy = 2f;
 
         _boxCollider.enabled = false;
-        _boxCollider.enabled = false;
 
         if (_checkDeadCoroutine != null)
             StopCoroutine(_checkDeadCoroutine);
@@ -77,6 +99,7 @@ public class Enemy : MonoBehaviour
         _sprite.color = new Color(1f, .5f, .5f);
         _rb2d.bodyType = RigidbodyType2D.Dynamic;
         _getKilled.Invoke();
+        _spawner.TriggerScript(transform);
         Destroy(gameObject, TimeBeforeDestroy);
     }
 

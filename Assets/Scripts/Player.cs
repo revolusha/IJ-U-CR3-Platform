@@ -12,6 +12,7 @@ public class Player : MonoBehaviour
     const int MaxHealth = 3;
 
     [SerializeField] private UnityEvent _getDamaged = new UnityEvent();
+    [SerializeField] private UnityEvent _getHeart = new UnityEvent();
     [SerializeField] private UnityEvent _getKilled = new UnityEvent();
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private float _speedXMultiplier = 5f;
@@ -43,7 +44,7 @@ public class Player : MonoBehaviour
         _jumpHash = Animator.StringToHash("isFlying");
         _speedHash = Animator.StringToHash("Speed");
         _healthUI = FindObjectOfType<HealthController>();
-        _label.UpdateGold(_gold);
+        _label.UpdateValue();
     }
 
     private void Update()
@@ -91,6 +92,7 @@ public class Player : MonoBehaviour
 
             _getDamaged.Invoke();
             _isDamaged = true;
+            TryConvertGoldToHeart();
             StartCoroutine(ResistInstantDamage());
         }
     }
@@ -98,7 +100,8 @@ public class Player : MonoBehaviour
     public void TakeCoin()
     {
         _gold++;
-        _label.UpdateGold(_gold);
+        _label.UpdateValue(_gold);
+        TryConvertGoldToHeart();
     }
 
     private void TryConvertGoldToHeart()
@@ -110,6 +113,8 @@ public class Player : MonoBehaviour
             _gold -= HeartCost;
             _health++;
             _healthUI.UpdateRender(_health);
+            _label.UpdateValue(_gold);
+            _getHeart.Invoke();
         }
     }
 

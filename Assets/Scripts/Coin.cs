@@ -1,7 +1,9 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
 [RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(CircleCollider2D))]
 
 public class Coin : MonoBehaviour
 {
@@ -20,7 +22,7 @@ public class Coin : MonoBehaviour
     {
         if (collider.TryGetComponent<Player>(out Player player))
         {
-            const float TimeToPlaySound = 3f;
+            const float TimeToPlaySound = 2f;
 
             player.TakeCoin();
             _reached.Invoke();

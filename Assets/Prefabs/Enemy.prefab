@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: -1611497311536645134}
   - component: {fileID: 3842718414391639594}
   - component: {fileID: -7327581280395567713}
+  - component: {fileID: 1457471977788576961}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -123,6 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b0f28635a8b3540b2cb154e1258259, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _coinSpawn: {fileID: 0}
   _speed: 0
   _distance: 0
   _player: {fileID: -2919966942006509675, guid: 72844fd700c22fc468966bc8326d76fb, type: 3}
@@ -304,3 +306,17 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1457471977788576961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3592145303833361155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32362892e878e4140b43eaa3408a588e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 5796894626638156095, guid: b6e8f144428e30f4da7e9d33a303f25f, type: 3}
+  _count: 3

@@ -17,8 +17,6 @@ public class HealthController : MonoBehaviour
 
     public void UpdateRender(int count)
     {
-        Debug.Log(count);
-
         if (count > _maxHealth)
         {
             count = _maxHealth;

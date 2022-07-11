@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,12 +8,12 @@ public class GoldLabel : MonoBehaviour
 {
     private Text _text;
 
-    private void Start()
+    private void OnEnable()
     {
         _text = GetComponent<Text>();
     }
 
-    public void UpdateGold(int amount)
+    public void UpdateValue(int amount = 0)
     {
         const int MaxGold = 9999;
 
@@ -25,6 +26,6 @@ public class GoldLabel : MonoBehaviour
             amount = MaxGold;
         }
 
-        _text.text = amount.ToString();
+        _text.text = Convert.ToString(amount);
     }
 }
