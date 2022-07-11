@@ -14,12 +14,14 @@ public class Player : MonoBehaviour
     [SerializeField] private UnityEvent _getDamaged = new UnityEvent();
     [SerializeField] private UnityEvent _getHeart = new UnityEvent();
     [SerializeField] private UnityEvent _getKilled = new UnityEvent();
+    [SerializeField] private Color _damagedColor;
     [SerializeField] private LayerMask _layerMask;
     [SerializeField] private float _speedXMultiplier = 5f;
     [SerializeField] private float _speedYForce = 5f;
 
+
     private GoldLabel _label;
-    private HealthController _healthUI;
+    private HealthUI _healthUI;
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
     private BoxCollider2D _boxCollider;
@@ -43,7 +45,7 @@ public class Player : MonoBehaviour
         _rigidbody.velocity = Vector2.zero;
         _jumpHash = Animator.StringToHash("isFlying");
         _speedHash = Animator.StringToHash("Speed");
-        _healthUI = FindObjectOfType<HealthController>();
+        _healthUI = FindObjectOfType<HealthUI>();
         _label.UpdateValue();
     }
 

@@ -9,6 +9,7 @@ using UnityEngine.Events;
 
 public class DroppedCoin : MonoBehaviour
 {
+    [SerializeField] private Color _reachedColor;
     [SerializeField] private UnityEvent _reached;
 
     private CapsuleCollider2D _capsuleCollider;
@@ -34,7 +35,7 @@ public class DroppedCoin : MonoBehaviour
 
             player.TakeCoin();
             _reached.Invoke();
-            _sprite.color = new Color(0, 0, 0, 0);
+            _sprite.color = _reachedColor;
             _circleCollider.enabled = false;
             _capsuleCollider.enabled = false;
             Destroy(gameObject, TimeToPlaySound);

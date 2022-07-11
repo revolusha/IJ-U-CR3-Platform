@@ -7,6 +7,7 @@ using UnityEngine.Events;
 
 public class Coin : MonoBehaviour
 {
+    [SerializeField] private Color _reachedColor;
     [SerializeField] private UnityEvent _reached;
 
     private SpriteRenderer _sprite;
@@ -26,7 +27,7 @@ public class Coin : MonoBehaviour
 
             player.TakeCoin();
             _reached.Invoke();
-            _sprite.color = new Color(0, 0, 0, 0);
+            _sprite.color = _reachedColor;
             _circleCollider.enabled = false;
             Destroy(gameObject, TimeToPlaySound);
         }
