@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
+
 public class Patrol : MonoBehaviour
 {
     [SerializeField] private float _distance;

@@ -11,6 +11,8 @@ public class Player : MonoBehaviour
 {
     const int MaxHealth = 3;
 
+    [SerializeField] private GoldLabel _label;
+    [SerializeField] private HealthUI _healthUI;
     [SerializeField] private UnityEvent _getDamaged = new UnityEvent();
     [SerializeField] private UnityEvent _getHeart = new UnityEvent();
     [SerializeField] private UnityEvent _getKilled = new UnityEvent();
@@ -20,8 +22,6 @@ public class Player : MonoBehaviour
     [SerializeField] private float _speedYForce = 5f;
 
 
-    private GoldLabel _label;
-    private HealthUI _healthUI;
     private SpriteRenderer _spriteRenderer;
     private Animator _animator;
     private BoxCollider2D _boxCollider;
@@ -41,11 +41,9 @@ public class Player : MonoBehaviour
         _animator = GetComponent<Animator>();
         _boxCollider = GetComponent<BoxCollider2D>();
         _rigidbody = GetComponent<Rigidbody2D>();
-        _label = FindObjectOfType<GoldLabel>();
         _rigidbody.velocity = Vector2.zero;
         _jumpHash = Animator.StringToHash("isFlying");
         _speedHash = Animator.StringToHash("Speed");
-        _healthUI = FindObjectOfType<HealthUI>();
         _label.UpdateValue();
     }
 

@@ -5298,6 +5298,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -2919966942006509675, guid: 72844fd700c22fc468966bc8326d76fb, type: 3}
+      propertyPath: _label
+      value: 
+      objectReference: {fileID: 1205485415}
+    - target: {fileID: -2919966942006509675, guid: 72844fd700c22fc468966bc8326d76fb, type: 3}
+      propertyPath: _healthUI
+      value: 
+      objectReference: {fileID: 504016487}
     - target: {fileID: 3037311929166193301, guid: 72844fd700c22fc468966bc8326d76fb, type: 3}
       propertyPath: m_RootOrder
       value: 3
